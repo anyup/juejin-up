@@ -12,7 +12,32 @@ bin-release/
 *.air
 *.ipa
 *.apk
+*.vscode
+.idea
+.history
+.DS_Store
 
 # Project files, i.e. `.project`, `.actionScriptProperties` and `.flexProperties`
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
+
+dist/
+rev/
+sign/
+unpackage/
+
+# pageage
+package-lock.json
+node_modules/
+
+# HBuilder
+.hbuilderx
+unpackage/debug
+unpackage/dist
+unpackage/resources
+unpackage/cache
+
+*/demo
+fly.js
+.VSCodeCounter
+*.css.map

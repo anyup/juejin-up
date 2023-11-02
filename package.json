@@ -1,0 +1,24 @@
+{
+  "name": "juejin-up",
+  "version": "1.0.0",
+  "description": "Juejin Project Items",
+  "main": "index.js",
+  "scripts": {
+    "sass:global": "sass --style compressed src/libs/css/global.scss src/libs/css/global.css"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitee.com:anyup/juejin-up.git"
+  },
+  "keywords": [
+    "juejin",
+    "item",
+    "demo",
+    "library"
+  ],
+  "author": "anyup",
+  "license": "MIT",
+  "devDependencies": {
+    "sass": "^1.69.5"
+  }
+}
