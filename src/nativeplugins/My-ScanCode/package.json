@@ -1,0 +1,23 @@
+{
+	"name": "MyScanCode",
+	"id": "My-ScanCode",
+	"version": "0.0.1",
+	"description": "扫码",
+	"_dp_type":"nativeplugin",
+	"_dp_nativeplugin":{
+		"android": {
+			"plugins": [
+				{
+					"type": "module",
+					"name": "My-ScanCode",
+					"class": "com.osmium.myscancode.ScanCodeWXModule"
+				}
+			],
+			"integrateType": "aar",
+			"minSdkVersion" : 19,
+            "dependencies": [
+				"com.journeyapps:zxing-android-embedded:3.6.0"
+            ]
+		}
+	}
+}
