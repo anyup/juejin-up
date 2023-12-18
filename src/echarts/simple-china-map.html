@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>中国地图</title>
+  </head>
+  <body>
+    <!-- 主页面 -->
+    <div id="main" style="height: 100vh"></div>
+    <!-- jquery 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+    <!-- echarts 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <!-- js -->
+    <script>
+      var myChart = echarts.init(document.getElementById("main"));
+      // 渲染中间map - 中国地图
+      function renderChart() {
+        $.getJSON("../libs/json/geoJson_china.json", function (data) {
+          // 注册地图
+          echarts.registerMap("china", data);
+          // 配置option
+          setOption();
+        });
+      }
+      // 渲染地图
+      function setOption() {
+        const option = {
+          // 地理坐标系组件用于地图的绘制
+          geo: {
+            // 使用 registerMap 注册的地图名称。
+            map: "china",
+            // 是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move'。设置成 true 为都开启
+            roam: true,
+            // 图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等。
+            label: {
+              show: true,
+              color: "#666666",
+            },
+            // 地图区域的多边形 图形样式。
+            itemStyle: {
+              // 地图区域的颜色
+              areaColor: "#71d5a1", // 绿色
+              // 图形的描边颜色
+              borderColor: "#2979ff", // 蓝色
+            },
+            // 设置高亮状态下的多边形和标签样式
+            emphasis: {
+              // 设置区域样式
+              itemStyle: {
+                areaColor: "#ffff99", // 黄色
+                borderColor: "#f29100", // 描边颜色黄色
+              },
+              // 设置字体
+              label: {
+                fontSize: 16, // 16px
+                color: "#f29100", // 白色
+              },
+            },
+          },
+          series: [
+            {
+              type: "map",
+              map: "china",
+              geoIndex: 0,
+              roam: true,
+            },
+            {
+              type: "scatter",
+              coordinateSystem: "geo",
+              symbolSize: "20",
+              itemStyle: {
+                color: "#fa3534",
+              },
+              data: [
+                { name: "北京", value: [116.4074, 39.9042] },
+                { name: "上海", value: [121.4737, 31.2304] },
+                { name: "广州", value: [113.2644, 23.1292] },
+                // 更多数据...
+              ],
+            },
+          ],
+        };
+        myChart.setOption(option, true);
+      }
+
+      renderChart();
+    </script>
+  </body>
+</html>
