@@ -15,22 +15,41 @@
     <!-- js -->
     <script>
       var myChart = echarts.init(document.getElementById("main"));
-      // 渲染中间map - 中国地图
-      function renderChart() {
-        $.getJSON("../libs/json/geoJson_china.json", function (data) {
-          // 注册地图
-          echarts.registerMap("china", data);
-          // 配置option
-          setOption();
+      // 获取原始地图json数据
+      function getJSON(adcode, callback) {
+        $.getJSON(
+          "https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=" +
+            adcode +
+            "_full",
+          function (data) {
+            callback(data);
+          }
+        );
+      }
+      // 初始化中国地图
+      function initChinaMap() {
+        getJSON("100000", function (data) {
+          renderChart("china", data);
         });
       }
       // 渲染地图
-      function setOption() {
+      function renderChart(name, data) {
+        // 注册地图
+        echarts.registerMap(name, data);
+        // 根据 json 数据拼装 mapdata， 用于地图点击下钻时传递数据，主要有adcode、name
+        const mapdata = data.features.map((item) => {
+          return item.properties;
+        });
+        // 配置option
+        setOption(name, mapdata);
+      }
+      // 设置地图option
+      function setOption(name, data) {
         const option = {
           // 地理坐标系组件用于地图的绘制
           geo: {
             // 使用 registerMap 注册的地图名称。
-            map: "china",
+            map: name,
             // 是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move'。设置成 true 为都开启
             roam: true,
             // 图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等。
@@ -62,30 +81,31 @@
           series: [
             {
               type: "map",
-              map: "china",
+              map: name,
               geoIndex: 0,
               roam: true,
-            },
-            {
-              type: "scatter",
-              coordinateSystem: "geo",
-              symbolSize: "20",
-              itemStyle: {
-                color: "#fa3534",
-              },
-              data: [
-                { name: "北京", value: [116.4074, 39.9042] },
-                { name: "上海", value: [121.4737, 31.2304] },
-                { name: "广州", value: [113.2644, 23.1292] },
-                // 更多数据...
-              ],
+              data: data,
             },
           ],
         };
         myChart.setOption(option, true);
       }
-
-      renderChart();
+      // 设置地图点击事件
+      myChart.on("click", function (params) {
+        console.log(params);
+        if (params.data) {
+          const { adcode, name, level } = params.data;
+          if (level === "district") {
+            alert("无此区域地图显示！");
+            return;
+          }
+          getJSON(adcode, function (data) {
+            renderChart(name, data);
+          });
+        }
+      });
+      // 初始化中国地图
+      initChinaMap();
     </script>
   </body>
 </html>
