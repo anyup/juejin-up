@@ -46,6 +46,24 @@
       // 设置地图option
       function setOption(name, data) {
         const option = {
+          // tooltip 提示配置项
+          tooltip: {
+            formatter: function (params) {
+              // 根据需要进行数据处理或格式化操作
+              const { adcode, name, level } = params.data;
+              // 返回自定义的tooltip内容
+              return (
+                "adcode: " +
+                adcode +
+                "<br>" +
+                "name: " +
+                name +
+                "<br>" +
+                "level: " +
+                level
+              );
+            },
+          },
           // 地理坐标系组件用于地图的绘制
           geo: {
             // 使用 registerMap 注册的地图名称。
@@ -97,6 +115,7 @@
           const { adcode, name, level } = params.data;
           if (level === "district") {
             alert("无此区域地图显示！");
+            initChinaMap();
             return;
           }
           getJSON(adcode, function (data) {

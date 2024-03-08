@@ -17,6 +17,18 @@
         height: 600px;
         margin: 30px auto;
       }
+      @media screen and (max-width: 900px) {
+        #main {
+          width: 100%;
+          height: 600px;
+        }
+      }
+      @media screen and (max-width: 600px) {
+        #main {
+          width: 100%;
+          height: 400px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -48,8 +60,11 @@
         },
         toolbox: {
           feature: {
-            dataZoom: {},
-            restore: {},
+            saveAsImage: {}, // 导出图片
+            dataView: { readOnly: false }, // 数据视图
+            magicType: { type: ["line", "bar"] }, // 动态类型切换
+            dataZoom: {}, // 数据区域缩放
+            restore: {}, // 重置
           },
         },
         brush: {
@@ -66,7 +81,7 @@
         },
         grid: {
           left: "60",
-          right: "100",
+          right: "60",
           bottom: "60",
           top: "100",
           containLabel: true,
@@ -231,9 +246,9 @@
           max: 12.6,
         },
         dataZoom: [
+          // { type: "inside", xAxisIndex: [0], start: 0, end: 100 },
           { type: "inside", xAxisIndex: [0], start: 0, end: 100 },
-          { type: "slider", xAxisIndex: [0], start: 0, end: 100 },
-          { type: "slider", yAxisIndex: [0], start: 0, end: 100 },
+          { type: "inside", yAxisIndex: [0], start: 0, end: 100 },
         ],
         series: {
           name: "温度(°C)",

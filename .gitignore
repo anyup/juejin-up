@@ -25,6 +25,7 @@ dist/
 rev/
 sign/
 unpackage/
+markdown/
 
 # pageage
 package-lock.json
