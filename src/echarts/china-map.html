@@ -4,10 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>中国地图</title>
+    <style>
+      a {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+      }
+    </style>
   </head>
   <body>
     <!-- 主页面 -->
     <div id="main" style="height: 100vh"></div>
+    <a id="back" href="javascript:;" style="display: none">返回</a>
     <!-- jquery 库 -->
     <script src="../libs/js/jquery@3.6.4.min.js"></script>
     <!-- echarts 库 -->
@@ -15,20 +23,51 @@
     <!-- js -->
     <script>
       var myChart = echarts.init(document.getElementById("main"));
+      var mapList = [];
+      // 返回按钮事件
+      $("#back").on("click", function () {
+        goBack();
+      });
       // 获取原始地图json数据
-      function getJSON(adcode, callback) {
-        $.getJSON(
-          "https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=" +
-            adcode +
-            "_full",
-          function (data) {
-            callback(data);
-          }
-        );
+      function getJSON({ name, adcode }, callback) {
+        // const url = `https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=${adcode}_full`;
+        const url = `../libs/geoJson/${adcode}_full.json`;
+        $.getJSON(url, function (data) {
+          callback(data);
+          setBackbtn({ name, adcode });
+        }).fail(function () {
+          alert("无此区域地图显示，请查看其他区域！");
+        });
+      }
+      // 设置返回策略
+      function setBackbtn({ name, adcode }) {
+        mapList.push({ name, adcode });
+        // 如果为中国地图，隐藏返回
+        if (adcode === 100000) {
+          $("#back").hide();
+        } else {
+          $("#back").show();
+        }
+        console.log(JSON.stringify(mapList));
+        myChart.dispatchAction({
+          type: "select",
+          name: "山东省",
+        });
+      }
+      // 点击返回，地图返回上一级
+      function goBack() {
+        if (mapList.length >= 2) {
+          const { name, adcode } = mapList[mapList.length - 2];
+          mapList.splice(-2, 2);
+          getJSON({ name, adcode }, function (data) {
+            renderChart(name, data);
+          });
+        }
       }
       // 初始化中国地图
       function initChinaMap() {
-        getJSON("100000", function (data) {
+        mapList = [];
+        getJSON({ name: "china", adcode: 100000 }, function (data) {
           renderChart("china", data);
         });
       }
@@ -50,52 +89,49 @@
           tooltip: {
             formatter: function (params) {
               // 根据需要进行数据处理或格式化操作
-              const { adcode, name, level } = params.data;
-              // 返回自定义的tooltip内容
-              return (
-                "adcode: " +
-                adcode +
-                "<br>" +
-                "name: " +
-                name +
-                "<br>" +
-                "level: " +
-                level
-              );
+              if (params && params.data) {
+                const { adcode, name, level } = params.data;
+                // 返回自定义的tooltip内容
+                return `adcode: ${adcode}<br>name: ${name}<br>level: ${level}`;
+              }
             },
           },
           // 地理坐标系组件用于地图的绘制
-          geo: {
-            // 使用 registerMap 注册的地图名称。
-            map: name,
-            // 是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move'。设置成 true 为都开启
-            roam: true,
-            // 图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等。
-            label: {
-              show: true,
-              color: "#666666",
-            },
-            // 地图区域的多边形 图形样式。
-            itemStyle: {
-              // 地图区域的颜色
-              areaColor: "#71d5a1", // 绿色
-              // 图形的描边颜色
-              borderColor: "#2979ff", // 蓝色
-            },
-            // 设置高亮状态下的多边形和标签样式
-            emphasis: {
-              // 设置区域样式
-              itemStyle: {
-                areaColor: "#ffff99", // 黄色
-                borderColor: "#f29100", // 描边颜色黄色
-              },
-              // 设置字体
+          geo: [
+            {
+              // 使用 registerMap 注册的地图名称。
+              map: name,
+              // 是否开启鼠标缩放和平移漫游。默认不开启。如果只想要开启缩放或者平移，可以设置成 'scale' 或者 'move'。设置成 true 为都开启
+              roam: true,
+              // 图形上的文本标签，可用于说明图形的一些数据信息，比如值，名称等。
+              selectedMode: "single",
               label: {
-                fontSize: 16, // 16px
-                color: "#f29100", // 白色
+                show: true,
+                color: "#666666",
+                fontSize: 8,
+              },
+              // 地图区域的多边形 图形样式。
+              itemStyle: {
+                // 地图区域的颜色
+                areaColor: "#71d5a1", // 绿色
+                // 图形的描边颜色
+                borderColor: "#2979ff", // 蓝色
+              },
+              // 设置高亮状态下的多边形和标签样式
+              emphasis: {
+                // 设置区域样式
+                itemStyle: {
+                  areaColor: "#ffff99", // 黄色
+                  borderColor: "#f29100", // 描边颜色黄色
+                },
+                // 设置字体
+                label: {
+                  fontSize: 16, // 16px
+                  color: "#f29100", // 白色
+                },
               },
             },
-          },
+          ],
           series: [
             {
               type: "map",
@@ -110,15 +146,14 @@
       }
       // 设置地图点击事件
       myChart.on("click", function (params) {
-        console.log(params);
         if (params.data) {
           const { adcode, name, level } = params.data;
           if (level === "district") {
             alert("无此区域地图显示！");
-            initChinaMap();
+            initChinaMap(); // 初始化中国地图
             return;
           }
-          getJSON(adcode, function (data) {
+          getJSON({ name, adcode }, function (data) {
             renderChart(name, data);
           });
         }

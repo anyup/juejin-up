@@ -17,7 +17,7 @@
       var myChart = echarts.init(document.getElementById("main"));
       // 渲染中间map - 中国地图
       function renderChart() {
-        $.getJSON("../libs/json/geoJson_china.json", function (data) {
+        $.getJSON("../libs/geoJson/100000_full.json", function (data) {
           // 注册地图
           echarts.registerMap("china", data);
           // 配置option
