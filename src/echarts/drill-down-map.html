@@ -12,7 +12,7 @@
   </head>
   <body>
     <!-- 主页面 -->
-    <h3>地图下钻示例演示：<span style="font-size: 12px;color: red;">仅支持山东省下钻演示</span></h3>
+    <h3>地图下钻演示：<span style="font-size: 12px;color: red;">已支持所有省市下钻</span></h3>
     <a id="back" href="javascript:;" style="display: none">返回</a>
     <div id="main" style="height: 800px"></div>
     <!-- jquery 库 -->
@@ -48,10 +48,10 @@
           $("#back").show();
         }
         console.log(JSON.stringify(mapList));
-        myChart.dispatchAction({
-          type: "select",
-          name: "山东省",
-        });
+        // myChart.dispatchAction({
+        //   type: "select",
+        //   name: "山东省",
+        // });
       }
       // 点击返回，地图返回上一级
       function goBack() {
