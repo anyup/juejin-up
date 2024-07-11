@@ -42,3 +42,4 @@ unpackage/cache
 fly.js
 .VSCodeCounter
 *.css.map
+.nvmrc
